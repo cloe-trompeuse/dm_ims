@@ -7,24 +7,26 @@
 
 
 {% block content %}
-    
+
     <div class="row" style="color: #575757; font-style: bold; font-size: 3rem;">
         <div class="col-md-8">Suppliers List</div>
-        <div class="col-md-4">       <!-- Log on to codeastro.com for more projects -->        
+        {% if request.user.is_staff %}
+        <div class="col-md-4">
             <div style="float:right;"> <a class="btn btn-success" href="{% url 'new-supplier' %}">Add New Supplier</a> </div>
         </div>
+        {% endif %}
     </div>
 
     <br>
 
     <table class="table table-css table-hover table-bordered">
-        
+
         <thead class="thead-dark align-middle">
             <tr>
                 <th width="25%">Name</th>
                 <th width="20%">Contact</th>
-                <th width="25%">GSTIN No</th>
-                <th width="30%">Actions</th>
+                <th width="25%">BRN No.</th>
+                {% if request.user.is_superuser %}<th width="30%">Actions</th>{% endif %}
             </tr>
         </thead>
 
@@ -33,24 +35,26 @@
         <tbody>
             {% for supplier in object_list %}
             <tr>
-                <td><!-- Log on to codeastro.com for more projects -->
+                <td>
                     <p> <a href="{% url 'supplier' supplier.name %}">{{ supplier.name }}</a> </p>
                 </td>
                 <td class="align-middle"> {{ supplier.phone }} </td>
                 <td class="align-middle"> {{ supplier.gstin }} </td>
+                {% if request.user.is_superuser %}
                 <td class="align-middle">
                     <div class="align-middle">
                         <a href="{% url 'edit-supplier' supplier.pk %}" class="btn btn-info btn-sm">Edit Details</a>
                         <a href="{% url 'delete-supplier' supplier.pk %}" class="btn btn-danger btn-sm">Delete Supplier</a>
                     </div>
-                </td>              
+                </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>
 
     </table>
 
-    <div class="align-middle"><!-- Log on to codeastro.com for more projects -->
+    <div class="align-middle">
         {% if is_paginated %}
 
             {% if page_obj.has_previous %}
@@ -76,11 +80,11 @@
 
 {% else %}
 
-        <tbody></tbody>   
-    </table><!-- Log on to codeastro.com for more projects -->
+        <tbody></tbody>
+    </table>
 
     <br><br><br><br><br><br><br><br>
-    <div style="color: #575757; font-style: bold; font-size: 1.5rem; text-align: center;">The records are empty. Please try adding some.</div>
+    <div style="color: #575757; font-style: bold; font-size: 1.5rem; text-align: center;">No records. Please add new records.</div>
 
 {% endif %}
 

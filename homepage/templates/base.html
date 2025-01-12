@@ -11,9 +11,9 @@
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 
-    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">    
-    <link rel="stylesheet" type="text/css" href="{% static 'css/sidebar.css' %}">    
-    <link rel="stylesheet" type="text/css" href="{% static 'css/dialogbox.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/sidebar.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dialogbox.css' %}">
 
     <title>DM IMS - {% block title %}Title Missing{% endblock title %}</title>
 
@@ -30,24 +30,26 @@
     </div>
 
     <main id="wrapper">
-    
+
     {% if user.is_authenticated %}
-    
+
         <nav id="sidebar">
-            
+
             <div class="sidebar-header">
                 <a class="navbar-brand titlefont mr-4" href="{% url 'home' %}"><h3>DM IMS</h3></a>
             </div>
 
             <ul class="list-unstyled sidebar-components">
                 {# <p class="sidebar-paragraph">Dummy Heading</p> #}
-                <li> 
+                <li>
                     <a class="sidebar-text sidebar-button" href="{% url 'home' %}"><i class="fas fa-home"></i> Home</a>
-                </li>               
+                </li>
                 <li>
                     <a href="#inventorySubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-boxes"></i>Inventory</a>
                     <ul class="collapse list-unstyled" id="inventorySubmenu">
+                        {% if request.user.is_superuser %}
                         <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'new-stock' %}"><i class="fas fa-dot-circle"></i> Add New Item</a> </li>
+                        {% endif %}
                         <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'inventory' %}"><i class="fas fa-dot-circle"></i> View Inventory</a> </li>
                     </ul>
                 </li>
@@ -80,7 +82,7 @@
                     <a href="#UserSubmenu" data-toggle="collapse" class="dropdown-toggle sidebar-text right-arrow sidebar-button"><i class="fas fa-user-circle"></i> {{ request.user.username }}</a>
                     <ul class="collapse list-unstyled" id="UserSubmenu">
                         {% if request.user.is_superuser %}
-                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'admin:index' %}"><i class="fas fa-dot-circle"></i>Admin Page</a> </li>
+                            <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'users' %}"><i class="fas fa-dot-circle"></i>Users</a> </li>
                         {% endif %}
                             <li> <a class="sidebar-text sidebar-subitem sidebar-button" href="{% url 'logout' %}"><i class="fas fa-dot-circle"></i> Logout</a> </li>
                     </ul>
@@ -99,33 +101,32 @@
             {% endcomment %}
 
         </nav>
-    
+
         <div id="content">
 
             <div class="row">
                 <div class="col-md-12">
-                
+
                     {% if messages %}
                         {% for message in messages %}
                             <div class="alert alert-{{ message.tags }}"> {{ message }} </div>
                         {% endfor %}
                     {% endif %}
-                
-    {% endif %} 
+
+    {% endif %}
 
                     <div class="container">
                         {% block content %}{% endblock content %}
                     </div>
-                    
+
                 </div>
             </div>
             <br>
 
         </div>
-    
-    </main>    
-    
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
+    </main>
+
     <script src="{% static 'bootstrap/jquery-3.3.1.slim.min.js' %}"></script>
     <script src="{% static 'bootstrap/popper.min.js' %}"></script>
     <script src="{% static 'bootstrap/bootstrap.min.js' %}"></script>

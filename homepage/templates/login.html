@@ -11,14 +11,14 @@
 
     <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/bootstrap.min.css' %}">
 
-    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">    
-    <link rel="stylesheet" type="text/css" href="{% static 'css/sidebar.css' %}">    
-    
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/sidebar.css' %}">
+
     <title>DM IMS - Login</title>
 </head>
 
 <body>
-    <div class="align-middle" style="color: #607d8b; font-style: bold; font-size: 3rem;">Inventory Management System</div>
+    <div class="align-middle" style="color: #607d8b; font-style: bold; font-size: 3rem;">DM Inventory Management System</div>
 
     <br>
 
@@ -30,11 +30,11 @@
 
             <h2 class="align-middle">You are already logged in, {{ request.user.username }}!</h2>
 
-            <div class="border-top pt-3 align-middle"> 
+            <div class="border-top pt-3 align-middle">
                 <br>
 
-                <a class="btn ghost-blue" href="{% url 'home' %}">Go back home</a> 
-                
+                <a class="btn ghost-blue" href="{% url 'home' %}">Go back home</a>
+
                 <br><br>
 
                 <a class="btn ghost-red" href="{% url 'logout' %}">Log Out</a>
@@ -51,8 +51,8 @@
                     </fieldset>
 
                     <div class="form-group">
-                        <div class="align-middle"> 
-                            <button class="btn btn-outline-success btn-lg" type="submit">Log In</button>         
+                        <div class="align-middle">
+                            <button class="btn btn-outline-success btn-lg" type="submit">Log In</button>
                             {# <button class="ml-2 btn btn-danger">Exit</button> #}
                         </div>
                     </div>
@@ -61,7 +61,7 @@
             {% endif %}
         </div>
     </div>
-    
+
     <script src="{% static 'bootstrap/jquery-3.3.1.slim.min.js' %}"></script>
     <script src="{% static 'bootstrap/popper.min.js' %}"></script>
     <script src="{% static 'bootstrap/bootstrap.min.js' %}"></script>

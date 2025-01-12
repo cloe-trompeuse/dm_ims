@@ -8,13 +8,15 @@
 
     <div class="row" style="color: #4e4e4e; font-style: bold; font-size: 3rem; ">
         <div class="col-md-8">Inventory List</div>
-        <div class="col-md-4">               
+        {% if request.user.is_superuser %}
+        <div class="col-md-4">
             <div style="float:right;"> <a class="btn btn-success" href="{% url 'new-stock' %}">Add New Stock</a> </div>
         </div>
+        {% endif %}
     </div>
-    
+
     <div style="border-bottom: 1px solid white;"></div>
-    
+
     <br>
 
     <table class="table table-css table-bordered table-hover">
@@ -28,15 +30,18 @@
         </form>
 
         <br>
-        
+
         <thead class="thead-dark align-middle">
             <tr>
                 <th width="40%">Item Name</th>
                 <th>Current Stock Level</th>
+                <th>Unit Price</th>
+                {% if request.user.is_superuser %}
                 <th>Actions</th>
+                {% endif %}
             </tr>
         </thead>
-                  
+
         {% if object_list %}
         <tbody>
             {% for stock in object_list %}
@@ -51,13 +56,19 @@
                     {% endif %}
 
                     <td class="align-middle">
+                        <p>{{ stock.unit_price }}</p>
+                    </td>
+
+                    {% if request.user.is_superuser %}
+                    <td class="align-middle">
                         <a href="{% url 'edit-stock' stock.pk %}" class="btn btn-info btn-sm">Edit Details</a>
                         <a href="{% url 'delete-stock' stock.pk %}" class="btn btn-danger btn-sm"> Delete Stock </a>
-                    </td>          
+                    </td>
+                    {% endif %}
                 </tr>
-            {% endfor %}                   
+            {% endfor %}
         </tbody>
-    </table>  
+    </table>
 
     <div class="align-middle">
         {% if is_paginated %}
@@ -83,7 +94,7 @@
     {% else %}
 
     <br><br><br><br><br><br><br><br>
-    <div style="color: #575757; font-style: bold; font-size: 1.5rem; text-align: center;">The records are empty. Please try adding some.</div>
+    <div style="color: #575757; font-style: bold; font-size: 1.5rem; text-align: center;">Empty inventory. Please try adding items</div>
 
 {% endif %}
 

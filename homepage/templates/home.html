@@ -10,9 +10,11 @@
 
     <br>
 
+    {% if request.user.is_staff  %}
     <div id="container" style="position: relative; height:45vh; border: 1.2mm ridge #4e6570; border-radius: 30px;" class="align-middle table-bordered">
         <canvas id="bar-graph"></canvas>
     </div>
+    {% endif %}
 
     <br>
 
@@ -35,10 +37,10 @@
 
     <div class="row">
         <div class="col-md-6">
-            <a href="{% url 'select-supplier' %}" class="btn btn-success btn-lg btn-block btn-huge">Incoming (Stock Purchases)</a>
+            <a href="{% url 'select-supplier' %}" class="btn btn-success btn-lg btn-block btn-huge">Outgoing (Customer Orders)</a>
         </div>
         <div class="col-md-6">
-            <a href="{% url 'new-sale' %}" class="btn btn-success btn-lg btn-block btn-huge">Outgoing (Customer Orders)</a>
+            <a href="{% url 'new-sale' %}" class="btn btn-success btn-lg btn-block btn-huge">Incoming (Stock Purchases)</a>
         </div>
     </div>
 
@@ -53,13 +55,15 @@
                     {% if not forloop.first %}
                         <br><div style="border-bottom: 0.5px solid #4e6570"></div><br>
                     {% endif %}
-                    <div class="row">               
-                        <div class="col-md-9"> 
-                            Bill No: #{{ item.billno }} <br> 
+                    <div class="row">
+                        <div class="col-md-9">
+                            Bill No: #{{ item.billno }} <br>
                             Purchased by <b>{{ item.name }}</b> <br>
                             <small><i>{{ item.time.date }}</i></small>
                         </div>
+                        {% if request.user.is_staff %}
                         <div class="col-md-2"> <br> ${{ item.get_total_price }} <br> <a href="{% url 'sale-bill' item.billno %}">View Bill</a> </div>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </div>
@@ -71,12 +75,14 @@
                         <br><div style="border-bottom: 0.5px solid #4e6570"></div><br>
                     {% endif %}
                     <div class="row">
-                        <div class="col-md-9"> 
-                            Bill No: #{{ item.billno }} <br> 
-                            Purchased by <b>{{ item.supplier.name }}</b> <br>
+                        <div class="col-md-9">
+                            Bill No: #{{ item.billno }} <br>
+                            Purchased from <b>{{ item.supplier.name }}</b> <br>
                             <small><i>{{ item.time.date }}</i></small>
                         </div>
+                        {% if request.user.is_staff %}
                         <div class="col-md-2"> <br>${{ item.get_total_price }} <br> <a href="{% url 'purchase-bill' item.billno %}">View Bill</a> </div>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </div>
@@ -84,7 +90,7 @@
         </div>
     </div>
 
-    <script src="{% static 'js/Chart.min.js' %}"></script>  
+    <script src="{% static 'js/Chart.min.js' %}"></script>
 
     <script>
         Chart.defaults.global.defaultFontColor = '#3c3c3c';

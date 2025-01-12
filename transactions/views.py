@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import (
-    View, 
+    View,
     ListView,
     CreateView,
     UpdateView,
@@ -10,19 +10,19 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import (
-    PurchaseBill, 
-    Supplier, 
+    PurchaseBill,
+    Supplier,
     PurchaseItem,
     PurchaseBillDetails,
-    SaleBill,  
+    SaleBill,
     SaleItem,
     SaleBillDetails
 )
 from .forms import (
-    SelectSupplierForm, 
+    SelectSupplierForm,
     PurchaseItemFormset,
-    PurchaseDetailsForm, 
-    SupplierForm, 
+    PurchaseDetailsForm,
+    SupplierForm,
     SaleForm,
     SaleItemFormset,
     SaleDetailsForm
@@ -47,12 +47,12 @@ class SupplierCreateView(SuccessMessageMixin, CreateView):
     success_url = '/transactions/suppliers'
     success_message = "Supplier has been created successfully"
     template_name = "suppliers/edit_supplier.html"
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = 'New Supplier'
         context["savebtn"] = 'Add Supplier'
-        return context     
+        return context
 
 
 # used to update a supplier's info
@@ -62,7 +62,7 @@ class SupplierUpdateView(SuccessMessageMixin, UpdateView):
     success_url = '/transactions/suppliers'
     success_message = "Supplier details has been updated successfully"
     template_name = "suppliers/edit_supplier.html"
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = 'Edit Supplier'
@@ -80,10 +80,10 @@ class SupplierDeleteView(View):
         supplier = get_object_or_404(Supplier, pk=pk)
         return render(request, self.template_name, {'object' : supplier})
 
-    def post(self, request, pk):  
+    def post(self, request, pk):
         supplier = get_object_or_404(Supplier, pk=pk)
         supplier.is_deleted = True
-        supplier.save()                                               
+        supplier.save()
         messages.success(request, self.success_message)
         return redirect('suppliers-list')
 
@@ -106,7 +106,7 @@ class SupplierView(View):
         }
         return render(request, 'suppliers/supplier.html', context)
 
-# shows the list of bills of all purchases 
+# shows the list of bills of all purchases
 class PurchaseView(ListView):
     model = PurchaseBill
     template_name = "purchases/purchases_list.html"
@@ -132,7 +132,7 @@ class SelectSupplierView(View):
         return render(request, self.template_name, {'form': form})
 
 # used to generate a bill object and save items
-class PurchaseCreateView(View):                                                 
+class PurchaseCreateView(View):
     template_name = 'purchases/new_purchase.html'
 
     def get(self, request, pk):
@@ -161,7 +161,7 @@ class PurchaseCreateView(View):
                 # gets the stock item
                 stock = get_object_or_404(Stock, name=billitem.stock.name)       # gets the item
                 # calculates the total price
-                billitem.totalprice = billitem.perprice * billitem.quantity
+                billitem.totalprice = billitem.stock.unit_price * billitem.quantity
                 # updates quantity in stock db
                 stock.quantity += billitem.quantity                              # updates quantity
                 # saves bill item and stock
@@ -181,7 +181,7 @@ class PurchaseDeleteView(SuccessMessageMixin, DeleteView):
     model = PurchaseBill
     template_name = "purchases/delete_purchase.html"
     success_url = '/transactions/purchases'
-    
+
     def delete(self, *args, **kwargs):
         self.object = self.get_object()
         items = PurchaseItem.objects.filter(billno=self.object.billno)
@@ -193,7 +193,7 @@ class PurchaseDeleteView(SuccessMessageMixin, DeleteView):
         messages.success(self.request, "Purchase bill has been deleted successfully")
         return super(PurchaseDeleteView, self).delete(*args, **kwargs)
 
-# shows the list of bills of all sales 
+# shows the list of bills of all sales
 class SaleView(ListView):
     model = SaleBill
     template_name = "sales/sales_list.html"
@@ -202,7 +202,7 @@ class SaleView(ListView):
     paginate_by = 10
 
 # used to generate a bill object and save items
-class SaleCreateView(View):                                                      
+class SaleCreateView(View):
     template_name = 'sales/new_sale.html'
 
     def get(self, request):
@@ -222,7 +222,7 @@ class SaleCreateView(View):
         if form.is_valid() and formset.is_valid():
             # saves bill
             billobj = form.save(commit=False)
-            billobj.save()     
+            billobj.save()
             # create bill details object
             billdetailsobj = SaleBillDetails(billno=billobj)
             billdetailsobj.save()
@@ -231,11 +231,11 @@ class SaleCreateView(View):
                 billitem = form.save(commit=False)
                 billitem.billno = billobj                                       # links the bill object to the items
                 # gets the stock item
-                stock = get_object_or_404(Stock, name=billitem.stock.name)      
+                stock = get_object_or_404(Stock, name=billitem.stock.name)
                 # calculates the total price
-                billitem.totalprice = billitem.perprice * billitem.quantity
+                billitem.totalprice = billitem.stock.unit_price * billitem.quantity
                 # updates quantity in stock db
-                stock.quantity -= billitem.quantity   
+                stock.quantity -= billitem.quantity
                 # saves bill item and stock
                 stock.save()
                 billitem.save()
@@ -254,7 +254,7 @@ class SaleDeleteView(SuccessMessageMixin, DeleteView):
     model = SaleBill
     template_name = "sales/delete_sale.html"
     success_url = '/transactions/sales'
-    
+
     def delete(self, *args, **kwargs):
         self.object = self.get_object()
         items = SaleItem.objects.filter(billno=self.object.billno)
@@ -285,8 +285,8 @@ class PurchaseBillView(View):
         form = PurchaseDetailsForm(request.POST)
         if form.is_valid():
             billdetailsobj = PurchaseBillDetails.objects.get(billno=billno)
-            
-            billdetailsobj.eway = request.POST.get("eway")    
+
+            billdetailsobj.eway = request.POST.get("eway")
             billdetailsobj.veh = request.POST.get("veh")
             billdetailsobj.destination = request.POST.get("destination")
             billdetailsobj.po = request.POST.get("po")
@@ -312,7 +312,7 @@ class SaleBillView(View):
     model = SaleBill
     template_name = "bill/sale_bill.html"
     bill_base = "bill/bill_base.html"
-    
+
     def get(self, request, billno):
         context = {
             'bill'          : SaleBill.objects.get(billno=billno),
@@ -326,8 +326,8 @@ class SaleBillView(View):
         form = SaleDetailsForm(request.POST)
         if form.is_valid():
             billdetailsobj = SaleBillDetails.objects.get(billno=billno)
-            
-            billdetailsobj.eway = request.POST.get("eway")    
+
+            billdetailsobj.eway = request.POST.get("eway")
             billdetailsobj.veh = request.POST.get("veh")
             billdetailsobj.destination = request.POST.get("destination")
             billdetailsobj.po = request.POST.get("po")
